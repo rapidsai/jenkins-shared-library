@@ -1,4 +1,4 @@
-test_configs  = [
+def test_configs  = [
   [label: "driver-450", cuda_ver: "11.0", py_ver: "3.8", os: "centos7", arc: "ARM"],
   [label: "driver-495", cuda_ver: "11.2", py_ver: "3.9", os: "ubuntu18.04", arc: "ARM"],
   [label: "driver-495", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arc: "ARM"],
