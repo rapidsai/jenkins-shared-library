@@ -2,7 +2,7 @@ def generateStage(test_config, steps) {
   return {
     stage("Test - ${test_config.label} - ${test_config.cuda_ver} - ${test_config.py_ver} - ${test_config.os}") {
       node(test_config.label) {
-        docker.image("gpuci/rapidsai:22.04-cuda${test_config.cuda_ver}-devel-${test_config.os}-py${test_config.py_ver}").inside("--runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER") {
+        docker.image("gpuci/${getArcImageString(test_config.arc)}:22.04-cuda${test_config.cuda_ver}-devel-${test_config.os}-py${test_config.py_ver}").inside("--runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER") {
           steps()
         }
       }
@@ -25,5 +25,13 @@ def call(Closure steps) {
     return test_configs.collectEntries {
       ["${it.arc}: ${it.label} - ${it.cuda_ver} - ${it.py_ver} - ${it.os}" : generateStage(it, steps)]
     }
+  }
+}
+
+def getArcImageString(arc) {
+  if(arc == "arm64") {
+      return 'rapidsai-arm64'
+  } else {
+      return 'rapidsai'
   }
 }
