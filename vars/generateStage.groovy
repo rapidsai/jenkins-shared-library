@@ -26,7 +26,7 @@ def generateCudaBuildStage(test_config, steps) {
     return {
         stage("C++ build - ${test_config.label}") {
             node(test_config.label) {
-                docker.image("${getArcImage(test_config.arc)}") {
+                docker.image("${getArcImage(test_config.arc)}").inside("--runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER") {
                     steps()                    
                 }
             }
