@@ -2,7 +2,7 @@ def generateTestStage(test_config, steps) {
   return {
     stage("Test - ${test_config.label} - ${test_config.cuda_ver} - ${test_config.py_ver} - ${test_config.os}") {
       node(test_config.label) {
-        docker.image("gpuci/${getArcImageString(test_config.arc)}:22.04-cuda${test_config.cuda_ver}-devel-${test_config.os}-py${test_config.py_ver}").inside("--runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER -v $WORKSPACE:$WORKSPACE") {
+        docker.image("gpuci/${getArcImageString(test_config.arc)}:22.04-cuda${test_config.cuda_ver}-devel-${test_config.os}-py${test_config.py_ver}").inside("--runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER") {
           steps()
         }
       }
