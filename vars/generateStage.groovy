@@ -27,7 +27,7 @@ def generateCudaBuildStage(test_config, steps) {
         stage("C++ build - ${test_config.label}") {
             node(test_config.label) {
                 docker.image("${getArcImage(test_config.arc)}").inside {
-                  sh "export ARC=${test_config.arc} && echo $ARC"
+                  // sh "export ARC=${test_config.arc} && echo $ARC"
                   steps()                    
                 }
             }
