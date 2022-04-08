@@ -29,8 +29,7 @@ def generateCudaBuildStage(test_config, steps) {
                 docker.image("${getArcImage(test_config.arc)}").inside {
                   sh """#!/bin/bash
                     export ARC=${test_config.arc}
-                    echo 'the-arc is: $ARC'
-                  """
+                    echo 'the-arc is: "$ARC"'
                   steps()                    
                 }
             }
