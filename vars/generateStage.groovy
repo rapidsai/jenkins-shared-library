@@ -70,10 +70,10 @@ def call(stage, Closure steps) {
           [arc: "amd64", label: "cpu4-amd64"]
       ],
       python_build: [
-          [arc: "arm64", py_ver: "3.8", label: "cpu"],
-          [arc: "arm64", py_ver: "3.9", label: "cpu"],
-          [arc: "amd64", py_ver: "3.8", label: "cpu"],
-          [arc: "amd64", py_ver: "3.9", label: "cpu"],
+          [arc: "arm64", py_ver: "3.8", label: "cpu", cuda_ver: "11.5"],
+          [arc: "arm64", py_ver: "3.9", label: "cpu", cuda_ver: "11.5"],
+          [arc: "amd64", py_ver: "3.8", label: "cpu", cuda_ver: "11.5"],
+          [arc: "amd64", py_ver: "3.9", label: "cpu", cuda_ver: "11.5"],
       ]
   ]
   node {
