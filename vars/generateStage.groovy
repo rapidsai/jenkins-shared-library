@@ -30,7 +30,6 @@ def generateCudaBuildStage(test_config, steps) {
                   sh """#!/bin/bash
                     export ARC=${test_config.arc}
                     echo 'the-arc is: "$ARC"'
-                  """
                   steps()                    
                 }
             }
