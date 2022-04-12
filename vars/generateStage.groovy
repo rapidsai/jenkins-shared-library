@@ -38,7 +38,7 @@ def generatePythonBuildStage(test_config, steps) {
     return {
         stage("Python build - ${test_config.label}") {
             node(test_config.label) {
-                docker.image("gpuci/${getArcImageString(test_config.arc)}:22.04-cuda${test_config.cuda_ver}-devel-${test_config.os}-py${test_config.py_ver}").inside("-e ARC=${test_config.arc}") {
+                docker.image("gpuci/${getArcImageStringForPyBuild(test_config.arc)}:22.04-cuda${test_config.cuda_ver}-devel-${test_config.os}-py${test_config.py_ver}").inside("-e ARC=${test_config.arc}") {
                   steps()
                 }
             }
@@ -84,6 +84,15 @@ def call(stage, Closure steps) {
 def getArcImageString(arc) {
   if(arc == "arm64") {
       return 'rapidsai-arm64'
+  } else {
+      return 'rapidsai'
+  }
+}
+
+
+def getArcImageStringForPyBuild(arc) {
+  if(arc == "arm64") {
+      return 'rapidsai-driver-arm64'
   } else {
       return 'rapidsai'
   }
