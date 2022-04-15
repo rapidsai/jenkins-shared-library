@@ -49,11 +49,11 @@ def generatePythonBuildStage(test_config, steps) {
 def call(stage, Closure steps) {
   parallels_config = [
       branch_pr_test: [
-        [label: "driver-495-arm", cuda_ver: "11.2", py_ver: "3.9", os: "ubuntu18.04", arc: "arm64"],
-        [label: "driver-495-arm", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arc: "arm64"],
+        // [label: "driver-495-arm", cuda_ver: "11.2", py_ver: "3.9", os: "ubuntu18.04", arc: "arm64"],
+        // [label: "driver-495-arm", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arc: "arm64"],
         
-        [label: "driver-450", cuda_ver: "11.0", py_ver: "3.8", os: "centos7", arc: "amd64"],
-        [label: "driver-495", cuda_ver: "11.2", py_ver: "3.9", os: "ubuntu18.04", arc: "amd64"],
+        // [label: "driver-450", cuda_ver: "11.0", py_ver: "3.8", os: "centos7", arc: "amd64"],
+        // [label: "driver-495", cuda_ver: "11.2", py_ver: "3.9", os: "ubuntu18.04", arc: "amd64"],
         [label: "driver-495", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arc: "amd64"],
       ],
       nightly_test: [
