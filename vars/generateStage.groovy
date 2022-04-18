@@ -2,7 +2,7 @@ def generateTestStage(test_config, steps) {
   return {
     stage("Test - ${test_config.label} - ${test_config.cuda_ver} - ${test_config.py_ver} - ${test_config.os}") {
       node(test_config.label) {
-        docker.image("gpuci/${getArcImageString(test_config.arc)}:22.04-cuda${test_config.cuda_ver}-devel-${test_config.os}-py${test_config.py_ver}").inside("--runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER -e ARC=${test_config.arc} -e CUDA=${test_config.cuda_ver} -e PY_VER=${test_config.py_ver}") {
+        docker.image("gpuci/${getArcImageString(test_config.arc)}:22.06-cuda${test_config.cuda_ver}-devel-${test_config.os}-py${test_config.py_ver}").inside("--runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER -e ARC=${test_config.arc} -e CUDA=${test_config.cuda_ver} -e PY_VER=${test_config.py_ver}") {
           steps()
         }
       }
@@ -14,7 +14,7 @@ def generateNightlyTestStage(test_config, steps) {
     return {
         stage("Nightly Test - ${test_config.label} - ${test_config.cuda_ver} - ${test_config.py_ver} - ${test_config.os}") {
             node(test_config.label) {
-                docker.image("gpuci/${getArcImageString(test_config.arc)}:22.04-cuda${test_config.cuda_ver}-devel-${test_config.os}-py${test_config.py_ver}").inside("--runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER -e ARC=${test_config.arc} -e CUDA=${test_config.cuda_ver} -e PY_VER=${test_config.py_ver}") {
+                docker.image("gpuci/${getArcImageString(test_config.arc)}:22.06-cuda${test_config.cuda_ver}-devel-${test_config.os}-py${test_config.py_ver}").inside("--runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER -e ARC=${test_config.arc} -e CUDA=${test_config.cuda_ver} -e PY_VER=${test_config.py_ver}") {
                 steps()
                 }
             }
@@ -38,7 +38,7 @@ def generatePythonBuildStage(test_config, steps) {
     return {
         stage("Python build - ${test_config.label}") {
             node(test_config.label) {
-                docker.image("gpuci/${getArcImageStringForPyBuild(test_config.arc)}:22.04-cuda${test_config.cuda_ver}-devel-${test_config.os}-py${test_config.py_ver}").inside("-e ARC=${test_config.arc} -e PY_VER=${test_config.py_ver}") {
+                docker.image("gpuci/${getArcImageStringForPyBuild(test_config.arc)}:22.06-cuda${test_config.cuda_ver}-devel-${test_config.os}-py${test_config.py_ver}").inside("-e ARC=${test_config.arc} -e PY_VER=${test_config.py_ver}") {
                   steps()
                 }
             }
@@ -123,8 +123,8 @@ def generateStage(stage, parallels_config, steps) {
 
 def getArcImage(arc) {
     if(arc == "arm64") {
-            return 'gpuci/rapidsai-arm64:22.04-cuda11.5-devel-ubuntu18.04-py3.8'
+            return 'gpuci/rapidsai-arm64:22.06-cuda11.5-devel-ubuntu18.04-py3.8'
     } else {
-        return 'gpuci/rapidsai:22.04-cuda11.5-devel-centos7-py3.8'
+        return 'gpuci/rapidsai:22.06-cuda11.5-devel-centos7-py3.8'
     }
 }
