@@ -4,7 +4,14 @@ def generateTestStage(test_config, steps) {
       node(test_config.label) {
         docker
           .image("gpuci/${getArcImageString(test_config.arc)}:22.06-cuda${test_config.cuda_ver}-devel-${test_config.os}-py${test_config.py_ver}")
-          .inside("--runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER -e ARC=${test_config.arc} -e CUDA=${test_config.cuda_ver} -e PY_VER=${test_config.py_ver} -e HOME=$WORKSPACE") {
+          .inside("""
+            --runtime=nvidia
+            -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER
+            -e ARC=${test_config.arc}
+            -e CUDA=${test_config.cuda_ver}
+            -e PY_VER=${test_config.py_ver}
+            -e HOME=$WORKSPACE
+          """) {
           steps()
         }
       }
@@ -18,7 +25,14 @@ def generateNightlyTestStage(test_config, steps) {
             node(test_config.label) {
                 docker
                   .image("gpuci/${getArcImageString(test_config.arc)}:22.06-cuda${test_config.cuda_ver}-devel-${test_config.os}-py${test_config.py_ver}")
-                  .inside("--runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER -e ARC=${test_config.arc} -e CUDA=${test_config.cuda_ver} -e PY_VER=${test_config.py_ver} -e HOME=$WORKSPACE") {
+                  .inside("""
+                    --runtime=nvidia
+                    -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER
+                    -e ARC=${test_config.arc}
+                    -e CUDA=${test_config.cuda_ver}
+                    -e PY_VER=${test_config.py_ver}
+                    -e HOME=$WORKSPACE
+                  """) {
                 steps()
                 }
             }
@@ -32,7 +46,9 @@ def generateCudaBuildStage(test_config, steps) {
             node(test_config.label) {
                 docker
                   .image("${getArcImage(test_config.arc)}")
-                  .inside("-e ARC=${test_config.arc}") {
+                  .inside("""
+                    -e ARC=${test_config.arc}
+                  """) {
                   steps()
                 }
             }
@@ -46,7 +62,10 @@ def generatePythonBuildStage(test_config, steps) {
             node(test_config.label) {
                 docker
                   .image("gpuci/${getArcImageStringForPyBuild(test_config.arc)}:22.06-cuda${test_config.cuda_ver}-devel-${test_config.os}-py${test_config.py_ver}")
-                  .inside("-e ARC=${test_config.arc} -e PY_VER=${test_config.py_ver}") {
+                  .inside("""
+                    -e ARC=${test_config.arc}
+                    -e PY_VER=${test_config.py_ver}
+                  """) {
                   steps()
                 }
             }
