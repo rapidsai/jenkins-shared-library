@@ -93,7 +93,7 @@ def call(stage, Closure steps) {
 
     ],
     cuda_build: [
-        [arch: "arm64", label: "cpu4-arm64", os: "centos7", cuda_ver: "11.5"],
+        [arch: "arm64", label: "cpu4-arm64", os: "ubuntu18.04", cuda_ver: "11.5"],
         [arch: "amd64", label: "cpu4-amd64", os: "centos7", cuda_ver: "11.5"]
     ],
     python_build: [
