@@ -103,9 +103,7 @@ def call(stage, Closure steps) {
         [arc: "amd64", py_ver: "3.9", label: "cpu", cuda_ver: "11.5", os: "centos7"],
     ]
   ]
-  node {
-    return generateStage(stage, parallels_config, steps)
-  }
+  return generateStage(stage, parallels_config, steps)
 }
 
 def generateStage(stage, parallels_config, steps) {
