@@ -138,7 +138,7 @@ def getStageImg(config, is_build_stage) {
     img += "-driver"
   }
 
-  if (config.arch === "arm64") {
+  if (config.arch == "arm64") {
     img += "-arm64"
   }
 
