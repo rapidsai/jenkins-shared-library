@@ -1,1 +1,1 @@
-# gpuci-shared-library
+# jenkins-shared-library
