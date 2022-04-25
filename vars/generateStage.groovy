@@ -12,6 +12,11 @@ def generateTestStage(test_config, steps) {
             -e PY_VER=${test_config.py_ver}
             -e HOME=$WORKSPACE
           """) {
+          cleanWs (
+            deleteDirs: true,
+            externalDelete: 'sudo rm -rf %s'
+          )
+          checkout scm
           steps()
         }
       }
@@ -33,6 +38,11 @@ def generateNightlyTestStage(test_config, steps) {
               -e PY_VER=${test_config.py_ver}
               -e HOME=$WORKSPACE
             """) {
+          cleanWs (
+            deleteDirs: true,
+            externalDelete: 'sudo rm -rf %s'
+          )
+          checkout scm
           steps()
         }
       }
@@ -48,7 +58,13 @@ def generateCudaBuildStage(test_config, steps) {
           .image(getStageImg(test_config, true))
           .inside("""
             -e ARCH=${test_config.arch}
+            -e CUDA=${test_config.cuda_ver}
           """) {
+          cleanWs (
+            deleteDirs: true,
+            externalDelete: 'sudo rm -rf %s'
+          )
+          checkout scm
           steps()
         }
       }
@@ -65,7 +81,13 @@ def generatePythonBuildStage(test_config, steps) {
           .inside("""
             -e ARCH=${test_config.arch}
             -e PY_VER=${test_config.py_ver}
+            -e CUDA=${test_config.cuda_ver}
           """) {
+          cleanWs (
+            deleteDirs: true,
+            externalDelete: 'sudo rm -rf %s'
+          )
+          checkout scm
           steps()
         }
       }
