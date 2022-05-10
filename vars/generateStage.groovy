@@ -172,11 +172,12 @@ def getStageImg(config, is_build_stage) {
 def runStepsWithNotify(Closure steps) {
   def git_url = "${GIT_URL}"
   def repo = git_url.substring(++git_url.lastIndexOf('/'), git_url.lastIndexOf('.'))
+  def ghAccount = git_url.substring(git_url.lastIndexOf('.com')+5, git_url.lastIndexOf("/${repo}"))
   try {
-    githubNotify account: 'rapidsai', description: 'Build is now pending', repo: "${repo}", sha: "${GIT_COMMIT}", status: 'PENDING'
+    githubNotify account: "${ghAccount}", description: 'Build is now pending', repo: "${repo}", sha: "${GIT_COMMIT}", status: 'PENDING'
     steps()
-    githubNotify account: 'rapidsai', description: 'Build has succeeded', repo: "${repo}", sha: "${GIT_COMMIT}", status: 'SUCCESS'
+    githubNotify account: "${ghAccount}", description: 'Build has succeeded', repo: "${repo}", sha: "${GIT_COMMIT}", status: 'SUCCESS'
   } catch (e) {
-    githubNotify account: 'rapidsai', description: 'Build has failed', repo: "${repo}", sha: "${GIT_COMMIT}", status: 'FAILURE'
+    githubNotify account: "${ghAccount}", description: 'Build has failed', repo: "${repo}", sha: "${GIT_COMMIT}", status: 'FAILURE'
   }
 }
