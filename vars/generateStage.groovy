@@ -17,7 +17,7 @@ def generateTestStage(test_config, steps) {
             externalDelete: 'sudo rm -rf %s'
           )
           checkout scm
-          steps()
+          runStepsWithNotify(steps)
         }
       }
     }
@@ -43,7 +43,7 @@ def generateNightlyTestStage(test_config, steps) {
             externalDelete: 'sudo rm -rf %s'
           )
           checkout scm
-          steps()
+          runStepsWithNotify(steps)
         }
       }
     }
@@ -66,7 +66,7 @@ def generateCudaBuildStage(test_config, steps) {
             externalDelete: 'sudo rm -rf %s'
           )
           checkout scm
-          steps()
+          runStepsWithNotify(steps)
         }
       }
     }
@@ -90,7 +90,7 @@ def generatePythonBuildStage(test_config, steps) {
             externalDelete: 'sudo rm -rf %s'
           )
           checkout scm
-          steps()
+          runStepsWithNotify(steps)
         }
       }
     }
@@ -167,4 +167,18 @@ def getStageImg(config, is_build_stage) {
   }
 
   return "gpuci/${img}:22.06-cuda${cuda_ver}-devel-${os}-py${py_ver}"
+}
+
+def runStepsWithNotify(Closure steps) {
+  try {
+    steps()
+    githubNotify account: 'rapidsai', description: 'Build has succeeded', repo: 'rmm', sha: "${GIT_COMMIT}", status: 'SUCCESS'
+  } catch (e) {
+    githubNotify account: 'rapidsai', description: 'Build has failed', repo: 'rmm', sha: "${GIT_COMMIT}", status: 'FAILURE'
+  } finally {
+    def currentResult = currentBuild.result ?: 'SUCCESS'
+    if (currentResult == 'UNSTABLE') {
+      githubNotify account: 'rapidsai', description: 'Build is unstable', repo: 'rmm', sha: "${GIT_COMMIT}", status: 'PENDING'
+    }
+  }
 }
