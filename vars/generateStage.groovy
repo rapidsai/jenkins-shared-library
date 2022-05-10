@@ -170,15 +170,13 @@ def getStageImg(config, is_build_stage) {
 }
 
 def runStepsWithNotify(Closure steps) {
+  def git_url = "${GIT_URL}"
+  def repo = git_url.substring(++git_url.lastIndexOf('/'), git_url.lastIndexOf('.'))
   try {
+    githubNotify account: 'rapidsai', description: 'Build is now pending', repo: "${repo}", sha: "${GIT_COMMIT}", status: 'PENDING'
     steps()
-    githubNotify account: 'rapidsai', description: 'Build has succeeded', repo: 'rmm', sha: "${GIT_COMMIT}", status: 'SUCCESS'
+    githubNotify account: 'rapidsai', description: 'Build has succeeded', repo: "${repo}", sha: "${GIT_COMMIT}", status: 'SUCCESS'
   } catch (e) {
-    githubNotify account: 'rapidsai', description: 'Build has failed', repo: 'rmm', sha: "${GIT_COMMIT}", status: 'FAILURE'
-  } finally {
-    def currentResult = currentBuild.result ?: 'SUCCESS'
-    if (currentResult == 'UNSTABLE') {
-      githubNotify account: 'rapidsai', description: 'Build is unstable', repo: 'rmm', sha: "${GIT_COMMIT}", status: 'PENDING'
-    }
+    githubNotify account: 'rapidsai', description: 'Build has failed', repo: "${repo}", sha: "${GIT_COMMIT}", status: 'FAILURE'
   }
 }
