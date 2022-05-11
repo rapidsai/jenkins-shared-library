@@ -1,7 +1,10 @@
-BRANCH_PR_TEST_STAGE = "branch_pr_test"
-NIGHTLY_TEST_STAGE = "nightly_test"
-CUDA_BUILD_STAGE = "cuda_build"
-PYTHON_BUILD_STAGE = "python_build"
+import groovy.transform.Field
+
+
+@Field final BRANCH_PR_TEST_STAGE = "branch_pr_test"
+@Field final NIGHTLY_TEST_STAGE = "nightly_test"
+@Field final CUDA_BUILD_STAGE = "cuda_build"
+@Field final PYTHON_BUILD_STAGE = "python_build"
 
 def call(stage, Closure steps) {
   parallels_config = [
