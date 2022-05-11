@@ -1,7 +1,7 @@
-final BRANCH_PR_TEST_STAGE = "branch_pr_test"
-final NIGHTLY_TEST_STAGE = "nightly_test"
-final CUDA_BUILD_STAGE = "cuda_build"
-final PYTHON_BUILD_STAGE = "python_build"
+BRANCH_PR_TEST_STAGE = "branch_pr_test"
+NIGHTLY_TEST_STAGE = "nightly_test"
+CUDA_BUILD_STAGE = "cuda_build"
+PYTHON_BUILD_STAGE = "python_build"
 
 def call(stage, Closure steps) {
   parallels_config = [
