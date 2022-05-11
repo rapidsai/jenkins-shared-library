@@ -8,7 +8,7 @@ import groovy.transform.Field
 
 def call(stage, Closure steps) {
   parallels_config = [
-    "${BRANCH_PR_TEST_STAGE}": [
+    BRANCH_PR_TEST_STAGE: [
       [label: "driver-495-arm", cuda_ver: "11.2", py_ver: "3.9", os: "ubuntu18.04", arch: "arm64"],
       [label: "driver-495-arm", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arch: "arm64"],
 
@@ -16,7 +16,7 @@ def call(stage, Closure steps) {
       [label: "driver-495", cuda_ver: "11.2", py_ver: "3.9", os: "ubuntu18.04", arch: "amd64"],
       [label: "driver-495", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arch: "amd64"],
     ],
-    "${NIGHTLY_TEST_STAGE}": [
+    NIGHTLY_TEST_STAGE: [
       [label: "driver-495-arm", cuda_ver: "11.2", py_ver: "3.9", os: "ubuntu18.04", arch: "arm64"],
       [label: "driver-495-arm", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arch: "arm64"],
 
@@ -25,11 +25,11 @@ def call(stage, Closure steps) {
       [label: "driver-495", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arch: "amd64"],
 
     ],
-    "${CUDA_BUILD_STAGE}": [
+    CUDA_BUILD_STAGE: [
         [arch: "arm64", label: "cpu4-arm64", os: "ubuntu18.04", cuda_ver: "11.5"],
         [arch: "amd64", label: "cpu4-amd64", os: "centos7", cuda_ver: "11.5"]
     ],
-    "${PYTHON_BUILD_STAGE}": [
+    PYTHON_BUILD_STAGE: [
         [arch: "arm64", py_ver: "3.8", label: "cpu-arm64", cuda_ver: "11.5", os: "ubuntu18.04"],
         [arch: "arm64", py_ver: "3.9", label: "cpu-arm64", cuda_ver: "11.5", os: "ubuntu18.04"],
         [arch: "amd64", py_ver: "3.8", label: "cpu", cuda_ver: "11.5", os: "centos7"],
