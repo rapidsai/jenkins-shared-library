@@ -182,11 +182,11 @@ def runStepsWithNotify(Closure steps, test_config, String stage) {
   String ctx = generateContext(stage, test_config)
 
   try {
-    githubNotify account: "${ghAccount}", description: "Build ${BUILD_NUMBER} is now pending", repo: "${repo}", sha: "${GIT_COMMIT}", status: 'PENDING', context: ctx
+    githubNotify description: "Build ${BUILD_NUMBER} is now pending", status: 'PENDING', context: ctx
     steps()
-    githubNotify account: "${ghAccount}", description: "Build ${BUILD_NUMBER} succeeded in ${(currentBuild.durationString as Integer) / 60000}", repo: "${repo} minutes", sha: "${GIT_COMMIT}", status: 'SUCCESS', context: ctx
+    githubNotify description: "Build ${BUILD_NUMBER} succeeded in ${(currentBuild.durationString as Integer) / 60000} minutes", status: 'SUCCESS', context: ctx
   } catch (e) {
-    githubNotify account: "${ghAccount}", description: "Build${BUILD_NUMBER} failed in ${(currentBuild.durationString as Integer) / 60000}", repo: "${repo}", sha: "${GIT_COMMIT}", status: 'FAILURE', context: ctx
+    githubNotify description: "Build${BUILD_NUMBER} failed in ${(currentBuild.durationString as Integer) / 60000} minutes", status: 'FAILURE', context: ctx
   }
 }
 
