@@ -176,17 +176,14 @@ def getStageImg(config, is_build_stage) {
 }
 
 def runStepsWithNotify(Closure steps, test_config, String stage) {
-  def git_url = "${GIT_URL}"
-  def repo = git_url.substring(++git_url.lastIndexOf('/'), git_url.lastIndexOf('.'))
-  def ghAccount = git_url.substring(git_url.lastIndexOf('.com')+5, git_url.lastIndexOf("/${repo}"))
   String ctx = generateContext(stage, test_config)
 
   try {
-    githubNotify description: "Build ${BUILD_NUMBER} is now pending", status: 'PENDING', context: ctx
+    githubNotify description: "Build ${BUILD_NUMBER} is now pending", status: 'PENDING', context: ctx, targetUrl: env.RUN_DISPLAY_URL
     steps()
-    githubNotify description: "Build ${BUILD_NUMBER} succeeded in ${(currentBuild.durationString as Integer) / 60000} minutes", status: 'SUCCESS', context: ctx
+    githubNotify description: "Build ${BUILD_NUMBER} succeeded in ${(currentBuild.durationString as Integer) / 60000} minutes", status: 'SUCCESS', context: ctx, targetUrl: env.RUN_DISPLAY_URL
   } catch (e) {
-    githubNotify description: "Build${BUILD_NUMBER} failed in ${(currentBuild.durationString as Integer) / 60000} minutes", status: 'FAILURE', context: ctx
+    githubNotify description: "Build${BUILD_NUMBER} failed in ${(currentBuild.durationString as Integer) / 60000} minutes", status: 'FAILURE', context: ctx, targetUrl: env.RUN_DISPLAY_URL
   }
 }
 
