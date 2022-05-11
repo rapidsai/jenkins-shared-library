@@ -5,7 +5,7 @@ final PYTHON_BUILD_STAGE = "python_build"
 
 def call(stage, Closure steps) {
   parallels_config = [
-    branch_pr_test: [
+    "${BRANCH_PR_TEST_STAGE}": [
       [label: "driver-495-arm", cuda_ver: "11.2", py_ver: "3.9", os: "ubuntu18.04", arch: "arm64"],
       [label: "driver-495-arm", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arch: "arm64"],
 
@@ -13,7 +13,7 @@ def call(stage, Closure steps) {
       [label: "driver-495", cuda_ver: "11.2", py_ver: "3.9", os: "ubuntu18.04", arch: "amd64"],
       [label: "driver-495", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arch: "amd64"],
     ],
-    nightly_test: [
+    "${NIGHTLY_TEST_STAGE}": [
       [label: "driver-495-arm", cuda_ver: "11.2", py_ver: "3.9", os: "ubuntu18.04", arch: "arm64"],
       [label: "driver-495-arm", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arch: "arm64"],
 
@@ -22,11 +22,11 @@ def call(stage, Closure steps) {
       [label: "driver-495", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arch: "amd64"],
 
     ],
-    cuda_build: [
+    "${CUDA_BUILD_STAGE}": [
         [arch: "arm64", label: "cpu4-arm64", os: "ubuntu18.04", cuda_ver: "11.5"],
         [arch: "amd64", label: "cpu4-amd64", os: "centos7", cuda_ver: "11.5"]
     ],
-    python_build: [
+    "${PYTHON_BUILD_STAGE}": [
         [arch: "arm64", py_ver: "3.8", label: "cpu-arm64", cuda_ver: "11.5", os: "ubuntu18.04"],
         [arch: "arm64", py_ver: "3.9", label: "cpu-arm64", cuda_ver: "11.5", os: "ubuntu18.04"],
         [arch: "amd64", py_ver: "3.8", label: "cpu", cuda_ver: "11.5", os: "centos7"],
