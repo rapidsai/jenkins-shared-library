@@ -183,7 +183,7 @@ def runStepsWithNotify(Closure steps, test_config, String stage) {
     steps()
     githubNotify description: "Build ${BUILD_NUMBER} succeeded in ${(currentBuild.durationString as Integer) / 60000} minutes", status: 'SUCCESS', context: ctx, targetUrl: env.RUN_DISPLAY_URL
   } catch (e) {
-    githubNotify description: "Build${BUILD_NUMBER} failed in ${(currentBuild.durationString as Integer) / 60000} minutes", status: 'FAILURE', context: ctx, targetUrl: env.RUN_DISPLAY_URL
+    githubNotify description: "Build ${BUILD_NUMBER} failed in ${(currentBuild.durationString as Integer) / 60000} minutes", status: 'FAILURE', context: ctx, targetUrl: env.RUN_DISPLAY_URL
   }
 }
 
