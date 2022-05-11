@@ -183,7 +183,14 @@ def runStepsWithNotify(Closure steps, test_config, String stage) {
 
   try {
     githubNotify description: "Build ${BUILD_NUMBER} is now pending", status: 'PENDING', context: ctx, targetUrl: env.RUN_DISPLAY_URL
-    steps()
+    withCredentials([[
+      $class: 'AmazonWebServicesCredentialsBinding',
+      credentialsId: "aws-s3-gpuci",
+      accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+      secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+    ]]) {
+      steps()
+    }
     githubNotify description: "Build ${BUILD_NUMBER} succeeded in ${(currentBuild.durationString as Integer) / 60000} minutes", status: 'SUCCESS', context: ctx, targetUrl: env.RUN_DISPLAY_URL
   } catch (e) {
     githubNotify description: "Build ${BUILD_NUMBER} failed in ${(currentBuild.durationString as Integer) / 60000} minutes", status: 'FAILURE', context: ctx, targetUrl: env.RUN_DISPLAY_URL
