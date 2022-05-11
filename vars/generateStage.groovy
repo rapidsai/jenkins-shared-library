@@ -1,3 +1,9 @@
+final BRANCH_PR_TEST_STAGE = "branch_pr_test"
+final NIGHTLY_TEST_STAGE = "nightly_test"
+final CUDA_BUILD_STAGE = "cuda_build"
+final PYTHON_BUILD_STAGE = "python_build"
+
+
 def generateTestStage(test_config, steps) {
   return {
     stage("Test - ${test_config.label} - ${test_config.cuda_ver} - ${test_config.py_ver} - ${test_config.os}") {
@@ -17,7 +23,7 @@ def generateTestStage(test_config, steps) {
             externalDelete: 'sudo rm -rf %s'
           )
           checkout scm
-          runStepsWithNotify(steps)
+          runStepsWithNotify(steps, test_config, BRANCH_PR_TEST_STAGE)
         }
       }
     }
@@ -43,7 +49,7 @@ def generateNightlyTestStage(test_config, steps) {
             externalDelete: 'sudo rm -rf %s'
           )
           checkout scm
-          runStepsWithNotify(steps)
+          runStepsWithNotify(steps, test_config, NIGHTLY_TEST_STAGE)
         }
       }
     }
@@ -66,7 +72,7 @@ def generateCudaBuildStage(test_config, steps) {
             externalDelete: 'sudo rm -rf %s'
           )
           checkout scm
-          runStepsWithNotify(steps)
+          runStepsWithNotify(steps, test_config, CUDA_BUILD_STAGE)
         }
       }
     }
@@ -90,7 +96,7 @@ def generatePythonBuildStage(test_config, steps) {
             externalDelete: 'sudo rm -rf %s'
           )
           checkout scm
-          runStepsWithNotify(steps)
+          runStepsWithNotify(steps, test_config, PYTHON_BUILD_STAGE)
         }
       }
     }
@@ -132,19 +138,19 @@ def call(stage, Closure steps) {
 
 def generateStage(stage, parallels_config, steps) {
   switch(stage) {
-    case "branch_pr_test":
+    case BRANCH_PR_TEST_STAGE:
       return parallels_config[stage].collectEntries {
         ["${it.arch}: ${it.label} - ${it.cuda_ver} - ${it.py_ver} - ${it.os}" : generateTestStage(it, steps)]
       }
-    case "nightly_test":
+    case NIGHTLY_TEST_STAGE:
       return parallels_config[stage].collectEntries {
         ["${it.arch}: ${it.label} - ${it.cuda_ver} - ${it.py_ver} - ${it.os}" : generateNightlyTestStage(it, steps)]
       }
-    case "cuda_build":
+    case CUDA_BUILD_STAGE:
       return parallels_config[stage].collectEntries {
         ["${it.arch}: ${it.label}" : generateCudaBuildStage(it, steps)]
       }
-    case "python_build":
+    case PYTHON_BUILD_STAGE:
       return parallels_config[stage].collectEntries {
         ["${it.arch}: ${it.label} -${it.py_ver}" : generatePythonBuildStage(it, steps)]
       }
@@ -169,15 +175,31 @@ def getStageImg(config, is_build_stage) {
   return "gpuci/${img}:22.06-cuda${cuda_ver}-devel-${os}-py${py_ver}"
 }
 
-def runStepsWithNotify(Closure steps) {
+def runStepsWithNotify(Closure steps, test_config, String stage) {
   def git_url = "${GIT_URL}"
   def repo = git_url.substring(++git_url.lastIndexOf('/'), git_url.lastIndexOf('.'))
   def ghAccount = git_url.substring(git_url.lastIndexOf('.com')+5, git_url.lastIndexOf("/${repo}"))
+  String ctx = generateContext(stage, test_config)
+
   try {
-    githubNotify account: "${ghAccount}", description: 'Build is now pending', repo: "${repo}", sha: "${GIT_COMMIT}", status: 'PENDING'
+    githubNotify account: "${ghAccount}", description: "Build ${BUILD_NUMBER} is now pending", repo: "${repo}", sha: "${GIT_COMMIT}", status: 'PENDING', context: ctx
     steps()
-    githubNotify account: "${ghAccount}", description: 'Build has succeeded', repo: "${repo}", sha: "${GIT_COMMIT}", status: 'SUCCESS'
+    githubNotify account: "${ghAccount}", description: "Build ${BUILD_NUMBER} succeeded in ${(currentBuild.durationString as Integer) / 60000}", repo: "${repo} minutes", sha: "${GIT_COMMIT}", status: 'SUCCESS', context: ctx
   } catch (e) {
-    githubNotify account: "${ghAccount}", description: 'Build has failed', repo: "${repo}", sha: "${GIT_COMMIT}", status: 'FAILURE'
+    githubNotify account: "${ghAccount}", description: "Build${BUILD_NUMBER} failed in ${(currentBuild.durationString as Integer) / 60000}", repo: "${repo}", sha: "${GIT_COMMIT}", status: 'FAILURE', context: ctx
+  }
+}
+
+def generateContext(String stage, test_config) {
+  switch(stage) {
+    case BRANCH_PR_TEST_STAGE:
+      return "test/cuda/${test_config.arch}/${test_config.cuda_ver}/${test_config.label}/python/${test_config.py_ver}/${test_config.os}"
+    case NIGHTLY_TEST_STAGE:
+      return "test/cuda/${test_config.arch}/${test_config.cuda_ver}/${test_config.label}/python/${test_config.py_ver}/${test_config.os}"
+    case CUDA_BUILD_STAGE:
+      return "build/cuda/${test_config.arch}/${test_config.cuda_ver}"
+    case PYTHON_BUILD_STAGE:
+      return "build/python/${test_config.py_ver}/${test_config.cuda_ver}/cuda/${test_config.arch}/${test_config.cuda_ver}"
+    default: throw new Exception("Invalid stage name provided")
   }
 }
