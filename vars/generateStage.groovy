@@ -48,6 +48,7 @@ def generateTestStage(test_config, steps) {
           .image(getStageImg(test_config, false))
           .inside("""
             --runtime=nvidia
+            --pull=always
             -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER
             -e ARCH=${test_config.arch}
             -e CUDA=${test_config.cuda_ver}
@@ -74,6 +75,7 @@ def generateNightlyTestStage(test_config, steps) {
             .image(getStageImg(test_config, false))
             .inside("""
               --runtime=nvidia
+              --pull=always
               -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER
               -e ARCH=${test_config.arch}
               -e CUDA=${test_config.cuda_ver}
@@ -99,6 +101,7 @@ def generateCudaBuildStage(test_config, steps) {
         docker
           .image(getStageImg(test_config, true))
           .inside("""
+            --pull=always
             -e ARCH=${test_config.arch}
             -e CUDA=${test_config.cuda_ver}
             -e HOME=$WORKSPACE
@@ -122,6 +125,7 @@ def generatePythonBuildStage(test_config, steps) {
         docker
           .image(getStageImg(test_config, true))
           .inside("""
+            --pull=always
             -e ARCH=${test_config.arch}
             -e PY_VER=${test_config.py_ver}
             -e CUDA=${test_config.cuda_ver}
@@ -193,6 +197,8 @@ def runStepsWithNotify(Closure steps, test_config, String stage) {
     }
     githubNotify description: "Build ${BUILD_NUMBER} succeeded", status: 'SUCCESS', context: ctx, targetUrl: env.RUN_DISPLAY_URL
   } catch (e) {
+    echo "Caught: ${err}"
+    currentBuild.result = 'FAILURE'
     githubNotify description: "Build ${BUILD_NUMBER} failed", status: 'FAILURE', context: ctx, targetUrl: env.RUN_DISPLAY_URL
   }
 }
