@@ -195,9 +195,8 @@ def runStepsWithNotify(Closure steps, test_config, String stage) {
     }
     githubNotify description: "Build ${BUILD_NUMBER} succeeded", status: 'SUCCESS', context: ctx, targetUrl: env.RUN_DISPLAY_URL
   } catch (e) {
-    echo "Caught: ${e}"
     githubNotify description: "Build ${BUILD_NUMBER} failed", status: 'FAILURE', context: ctx, targetUrl: env.RUN_DISPLAY_URL
-    error 'build failed'
+    error e
   }
 }
 
