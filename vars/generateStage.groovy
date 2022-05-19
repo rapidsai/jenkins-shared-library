@@ -151,11 +151,11 @@ def generateStage(stage, parallels_config, steps) {
       }
     case CUDA_BUILD_STAGE:
       return parallels_config[stage].collectEntries {
-        ["${it.arch}: ${it.label}" : generateCudaBuildStage(it, steps)]
+        ["${it.arch}: ${it.label} - ${it.os} - ${it.cuda_ver}" : generateCudaBuildStage(it, steps)]
       }
     case PYTHON_BUILD_STAGE:
       return parallels_config[stage].collectEntries {
-        ["${it.arch}: ${it.label} -${it.py_ver}" : generatePythonBuildStage(it, steps)]
+        ["${it.arch}: ${it.label} - ${it.py_ver} - ${it.os} - ${it.cuda_ver}" : generatePythonBuildStage(it, steps)]
       }
     default: throw new Exception("Invalid stage name provided")
   }
