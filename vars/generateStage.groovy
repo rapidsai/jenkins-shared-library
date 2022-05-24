@@ -1,14 +1,14 @@
 import groovy.transform.Field
 
 
-@Field final BRANCH_PR_TEST_STAGE = "branch_pr_test"
+@Field final PR_TEST_STAGE = "pr_test"
 @Field final NIGHTLY_TEST_STAGE = "nightly_test"
 @Field final CUDA_BUILD_STAGE = "cuda_build"
 @Field final PYTHON_BUILD_STAGE = "python_build"
 
 def call(stage, Closure steps) {
   parallels_config = [
-    branch_pr_test: [
+    pr_test: [
       [label: "driver-495-arm", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arch: "arm64"],
 
       [label: "driver-450", cuda_ver: "11.0", py_ver: "3.8", os: "centos7", arch: "amd64"],
@@ -46,6 +46,7 @@ def generateTestStage(test_config, steps) {
           .image(getStageImg(test_config, false))
           .inside("""
             --runtime=nvidia
+            --pull=always
             -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER
             -e ARCH=${test_config.arch}
             -e CUDA=${test_config.cuda_ver}
@@ -57,7 +58,7 @@ def generateTestStage(test_config, steps) {
             externalDelete: 'sudo rm -rf %s'
           )
           checkout scm
-          runStepsWithNotify(steps, test_config, BRANCH_PR_TEST_STAGE)
+          runStepsWithNotify(steps, test_config, PR_TEST_STAGE)
         }
       }
     }
@@ -72,6 +73,7 @@ def generateNightlyTestStage(test_config, steps) {
             .image(getStageImg(test_config, false))
             .inside("""
               --runtime=nvidia
+              --pull=always
               -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER
               -e ARCH=${test_config.arch}
               -e CUDA=${test_config.cuda_ver}
@@ -141,7 +143,7 @@ def generatePythonBuildStage(test_config, steps) {
 
 def generateStage(stage, parallels_config, steps) {
   switch(stage) {
-    case BRANCH_PR_TEST_STAGE:
+    case PR_TEST_STAGE:
       return parallels_config[stage].collectEntries {
         ["${it.arch}: ${it.label} - ${it.cuda_ver} - ${it.py_ver} - ${it.os}" : generateTestStage(it, steps)]
       }
@@ -200,7 +202,7 @@ def runStepsWithNotify(Closure steps, test_config, String stage) {
 
 def generateContext(String stage, test_config) {
   switch(stage) {
-    case BRANCH_PR_TEST_STAGE:
+    case PR_TEST_STAGE:
       return "test/cuda/${test_config.arch}/${test_config.cuda_ver}/${test_config.label}/python/${test_config.py_ver}/${test_config.os}"
     case NIGHTLY_TEST_STAGE:
       return "test/cuda/${test_config.arch}/${test_config.cuda_ver}/${test_config.label}/python/${test_config.py_ver}/${test_config.os}"
