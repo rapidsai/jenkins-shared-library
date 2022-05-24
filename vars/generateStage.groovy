@@ -46,6 +46,7 @@ def generateTestStage(test_config, steps) {
           .image(getStageImg(test_config, false))
           .inside("""
             --runtime=nvidia
+            --pull=always
             -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER
             -e ARCH=${test_config.arch}
             -e CUDA=${test_config.cuda_ver}
@@ -72,6 +73,7 @@ def generateNightlyTestStage(test_config, steps) {
             .image(getStageImg(test_config, false))
             .inside("""
               --runtime=nvidia
+              --pull=always
               -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER
               -e ARCH=${test_config.arch}
               -e CUDA=${test_config.cuda_ver}
