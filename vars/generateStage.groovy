@@ -144,21 +144,29 @@ def generatePythonBuildStage(test_config, steps) {
 def generateStage(stage, parallels_config, steps) {
   switch(stage) {
     case PR_TEST_STAGE:
-      return parallels_config[stage].collectEntries {
+      def stages = parallels_config[stage].collectEntries {
         ["${it.arch}: ${it.label} - ${it.cuda_ver} - ${it.py_ver} - ${it.os}" : generateTestStage(it, steps)]
       }
+      stages.failFast = true
+      return stages
     case NIGHTLY_TEST_STAGE:
-      return parallels_config[stage].collectEntries {
+      def stages = parallels_config[stage].collectEntries {
         ["${it.arch}: ${it.label} - ${it.cuda_ver} - ${it.py_ver} - ${it.os}" : generateNightlyTestStage(it, steps)]
       }
+      stages.failFast = true
+      return stages
     case CUDA_BUILD_STAGE:
-      return parallels_config[stage].collectEntries {
+      def stages = parallels_config[stage].collectEntries {
         ["${it.arch}: ${it.label} - ${it.os} - ${it.cuda_ver}" : generateCudaBuildStage(it, steps)]
       }
+      stages.failFast = true
+      return stages
     case PYTHON_BUILD_STAGE:
-      return parallels_config[stage].collectEntries {
+      def stages = parallels_config[stage].collectEntries {
         ["${it.arch}: ${it.label} - ${it.py_ver} - ${it.os} - ${it.cuda_ver}" : generatePythonBuildStage(it, steps)]
       }
+      stages.failFast = true
+      return stages
     default: throw new Exception("Invalid stage name provided")
   }
 }
