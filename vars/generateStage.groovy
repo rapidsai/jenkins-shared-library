@@ -183,7 +183,7 @@ def getStageImg(config, is_build_stage) {
     img += "-arm64"
   }
 
-  return "gpuci/${img}:22.06-cuda${cuda_ver}-devel-${os}-py${py_ver}"
+  return "gpuci/${img}:22.08-cuda${cuda_ver}-devel-${os}-py${py_ver}"
 }
 
 def runStepsWithNotify(Closure steps, test_config, String stage) {
