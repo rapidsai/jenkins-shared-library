@@ -25,7 +25,7 @@ def call(stage, Closure steps) {
 
     ],
     wsl2_nightly_test: [
-      [label: "wsl2", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arch: "arm64"],
+      // [label: "wsl2", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arch: "arm64"],
 
       [label: "wsl2", cuda_ver: "11.0", py_ver: "3.8", os: "centos7", arch: "amd64"],
       [label: "wsl2", cuda_ver: "11.2", py_ver: "3.9", os: "ubuntu18.04", arch: "amd64"],
