@@ -53,7 +53,6 @@ def generateWSL2NightlyTestStage(test_config, steps) {
           docker
             .image(getStageImg(test_config, false))
             .inside("""
-              --runtime=nvidia
               -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER
               -e ARCH=${test_config.arch}
               -e CUDA=${test_config.cuda_ver}
