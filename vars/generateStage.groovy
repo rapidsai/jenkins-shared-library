@@ -5,7 +5,6 @@ import groovy.transform.Field
 @Field final NIGHTLY_TEST_STAGE = "nightly_test"
 @Field final CUDA_BUILD_STAGE = "cuda_build"
 @Field final PYTHON_BUILD_STAGE = "python_build"
-@Field final WSL2_NIGHTLY_TEST_STAGE = "wsl2_nightly_test"
 
 def call(stage, Closure steps) {
   parallels_config = [
@@ -24,13 +23,6 @@ def call(stage, Closure steps) {
       [label: "driver-495", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arch: "amd64"],
 
     ],
-    wsl2_nightly_test: [
-      [label: "wsl2", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arch: "arm64"],
-
-      [label: "wsl2", cuda_ver: "11.0", py_ver: "3.8", os: "centos7", arch: "amd64"],
-      [label: "wsl2", cuda_ver: "11.2", py_ver: "3.9", os: "ubuntu18.04", arch: "amd64"],
-      [label: "wsl2", cuda_ver: "11.5", py_ver: "3.9", os: "ubuntu20.04", arch: "amd64"],
-    ],
     cuda_build: [
         [arch: "arm64", label: "cpu4-arm64", os: "ubuntu18.04", cuda_ver: "11.5"],
         [arch: "amd64", label: "cpu4-amd64", os: "centos7", cuda_ver: "11.5"]
@@ -43,33 +35,6 @@ def call(stage, Closure steps) {
     ]
   ]
   return generateStage(stage, parallels_config, steps)
-}
-
-
-def generateWSL2NightlyTestStage(test_config, steps) {
-  return {
-      stage("WSL2 Nightly Test - ${test_config.label} - ${test_config.cuda_ver} - ${test_config.py_ver} - ${test_config.os}") {
-        node(test_config.label) {
-          docker
-            .image(getStageImg(test_config, false))
-            .inside("""
-              --runtime=nvidia
-              -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER
-              -e ARCH=${test_config.arch}
-              -e CUDA=${test_config.cuda_ver}
-              -e PY_VER=${test_config.py_ver}
-              -e HOME=$WORKSPACE
-            """) {
-          cleanWs (
-            deleteDirs: true,
-            externalDelete: 'sudo rm -rf %s'
-          )
-          checkout scm
-          runStepsWithNotify(steps, test_config, WSL2_NIGHTLY_TEST_STAGE)
-        }
-      }
-    }
-  }
 }
 
 
@@ -200,12 +165,6 @@ def generateStage(stage, parallels_config, steps) {
       }
       stages.failFast = true
       return stages
-    case WSL2_NIGHTLY_TEST_STAGE:
-      def stages = parallels_config[stage].collectEntries {
-        ["${it.arch}: ${it.label} - ${it.cuda_ver} - ${it.py_ver} - ${it.os}" : generateWSL2NightlyTestStage(it, steps)]
-      }
-      stages.failFast = true
-      return stages
     default: throw new Exception("Invalid stage name provided")
   }
 }
@@ -257,8 +216,6 @@ def generateContext(String stage, test_config) {
       return "build/cuda/${test_config.arch}/${test_config.cuda_ver}"
     case PYTHON_BUILD_STAGE:
       return "build/python/${test_config.py_ver}/${test_config.cuda_ver}/cuda/${test_config.arch}/${test_config.cuda_ver}"
-    case WSL2_NIGHTLY_TEST_STAGE:
-      return "wsl2_test/cuda/${test_config.arch}/${test_config.cuda_ver}/${test_config.label}/python/${test_config.py_ver}/${test_config.os}"
     default: throw new Exception("Invalid stage name provided")
   }
 }
