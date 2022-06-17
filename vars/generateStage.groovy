@@ -37,7 +37,6 @@ def call(stage, Closure steps) {
   return generateStage(stage, parallels_config, steps)
 }
 
-
 def generateTestStage(test_config, steps) {
   return {
     stage("Test - ${test_config.label} - ${test_config.cuda_ver} - ${test_config.py_ver} - ${test_config.os}") {
@@ -46,6 +45,7 @@ def generateTestStage(test_config, steps) {
           .image(getStageImg(test_config, false))
           .inside("""
             --runtime=nvidia
+            --pull=always
             -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER
             -e ARCH=${test_config.arch}
             -e CUDA=${test_config.cuda_ver}
@@ -72,6 +72,7 @@ def generateNightlyTestStage(test_config, steps) {
             .image(getStageImg(test_config, false))
             .inside("""
               --runtime=nvidia
+              --pull=always
               -e NVIDIA_VISIBLE_DEVICES=$EXECUTOR_NUMBER
               -e ARCH=${test_config.arch}
               -e CUDA=${test_config.cuda_ver}
